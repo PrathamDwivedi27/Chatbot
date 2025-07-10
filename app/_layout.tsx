@@ -1,38 +1,47 @@
-import { useEffect } from 'react';
-import { Stack } from 'expo-router';
-// import { AuthProvider } from '../src/contexts/AuthContext';
-// import { initializeFirebase } from '../src/services/firebase';
-import * as SplashScreen from 'expo-splash-screen';
+import React, { useEffect } from 'react'
+import { useFonts } from 'expo-font'
+import { SplashScreen, Stack } from 'expo-router'
+import AuthProvider from '@/contexts/AuthContext';
+import { ChatProvider } from '@/contexts/ChatContext';
+import { StatusBar } from 'expo-status-bar';
 
-// Prevent the splash screen from auto-hiding
 SplashScreen.preventAutoHideAsync();
 
-// Initialize Firebase
-// initializeFirebase();
+const RootLayout = () => {
+  const [loaded] = useFonts({
+    'Inter-Regular': require('../assets/fonts/Inter-Regular.ttf'),
+    'Inter-Medium': require('../assets/fonts/Inter-Medium.ttf'),
+    'Inter-SemiBold': require('../assets/fonts/Inter-SemiBold.ttf'),
+    'Inter-Bold': require('../assets/fonts/Inter-Bold.ttf'),
+  })
 
-export default function RootLayout() {
-  useEffect(() => {
-    // Hide splash screen after initialization
-    SplashScreen.hideAsync();
-  }, []);
+  useEffect(()=>{
+    if(loaded){
+      SplashScreen.hideAsync();
+    }
+  },[loaded]);
 
+  if(!loaded){
+    return null;
+  }
   return (
-    // <AuthProvider>
-      <Stack
-        screenOptions={{
-          headerStyle: {
-            backgroundColor: '#6366f1',
-          },
-          headerTintColor: '#fff',
-          headerTitleStyle: {
-            fontWeight: 'bold',
-          },
-        }}>
-        <Stack.Screen name="index" options={{ headerShown: false }} />
-        <Stack.Screen name="(auth)" options={{ headerShown: false }} />
-        <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-        <Stack.Screen name="+not-found" />
-      </Stack>
-    // {/* </AuthProvider> */}
-  );
+    <AuthProvider>
+      <ChatProvider>
+        <Stack
+          screenOptions={{
+            headerShown: false,
+            contentStyle: { backgroundColor: '#0000000' },
+          }}
+        >
+          <Stack.Screen name="index" />
+          <Stack.Screen name="(tabs)"/>
+          <Stack.Screen name="auth"/>
+
+        </Stack>
+        <StatusBar style="light" backgroundColor="#0000000" />
+      </ChatProvider>
+    </AuthProvider>
+  )
 }
+
+export default RootLayout
