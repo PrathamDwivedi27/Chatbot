@@ -1,30 +1,32 @@
-import React from 'react';
 import { Stack } from 'expo-router';
-import AuthProvider from '@/contexts/AuthContext';
-import { ChatProvider } from '@/contexts/ChatContext';
 import { StatusBar } from 'expo-status-bar';
+import { View, Platform } from 'react-native';
+import AuthProvider from '../contexts/AuthContext';
+import { ChatProvider } from '../contexts/ChatContext';
+import { SafeAreaProvider } from 'react-native-safe-area-context';
 
-// Optional: remove this if you're not using SplashScreen manually
-// SplashScreen.preventAutoHideAsync();
+export default function RootLayout() {
+  
 
-const RootLayout = () => {
   return (
-    <AuthProvider>
-      <ChatProvider>
-        <Stack
-          screenOptions={{
-            headerShown: false,
-            contentStyle: { backgroundColor: '#000000' },
-          }}
-        >
-          <Stack.Screen name="index" />
-          <Stack.Screen name="(tabs)" />
-          <Stack.Screen name="auth" />
-        </Stack>
-        <StatusBar style="light" backgroundColor="#000000" />
-      </ChatProvider>
-    </AuthProvider>
+    <SafeAreaProvider>
+      <AuthProvider>
+        <ChatProvider>
+          <View style={{ flex: 1, backgroundColor: 'black', paddingTop: Platform.OS === 'android' ? 25 : 0 }}>
+            <StatusBar style="light" translucent />
+            <Stack
+              screenOptions={{
+                headerShown: false,
+                contentStyle: { backgroundColor: '#000000' },
+              }}
+            >
+              <Stack.Screen name="index" />
+              <Stack.Screen name="(tabs)" />
+              <Stack.Screen name="auth" />
+            </Stack>
+          </View>
+        </ChatProvider>
+      </AuthProvider>
+    </SafeAreaProvider>
   );
-};
-
-export default RootLayout;
+}
