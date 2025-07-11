@@ -12,6 +12,9 @@ import { useRouter } from "expo-router";
 import { useAuth } from "../../contexts/AuthContext";
 import { useChat } from "../../contexts/ChatContext";
 import { Ionicons } from "@expo/vector-icons";
+import { BackHandler, Alert, Platform } from "react-native";
+import { useFocusEffect } from "@react-navigation/native";
+
 
 // const { width } = Dimensions.get("window");
 
@@ -46,6 +49,31 @@ export default function HomeScreen() {
     "Solve math problems",
     "Brainstorm ideas",
   ];
+
+  useFocusEffect(
+  React.useCallback(() => {
+    if (Platform.OS !== "android") return;
+
+    const onBackPress = () => {
+      Alert.alert(
+        "Exit App",
+        "Are you sure you want to exit?",
+        [
+          { text: "Cancel", style: "cancel" },
+          { text: "Exit", onPress: () => BackHandler.exitApp() },
+        ]
+      );
+      return true; // prevent default behavior
+    };
+
+    const subscription = BackHandler.addEventListener("hardwareBackPress", onBackPress);
+
+    return () => {
+      subscription.remove();
+    };
+  }, [])
+);
+
 
   return (
     <LinearGradient colors={["#000000", "#1a1a1a"]} style={styles.container}>
