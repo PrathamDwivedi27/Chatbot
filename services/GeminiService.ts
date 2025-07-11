@@ -2,7 +2,7 @@
 export class GeminiService {
   private static readonly API_KEY = "AIzaSyDsif0DejxlTQR5LIgrd-1ROatAIAna9h0";
   private static readonly BASE_URL =
-    "https://generativelanguage.googleapis.com/v1/models/gemini-2.5-pro:generateContent";
+    "https://generativelanguage.googleapis.com/v1/models/gemini-2.5-flash:generateContent";
 
   static async generateResponse(prompt: string): Promise<string> {
     try {
