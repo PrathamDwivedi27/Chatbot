@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef, useEffect } from "react";
 import {
   View,
   Text,
@@ -10,12 +10,12 @@ import {
   Animated,
   ActivityIndicator,
   StyleSheet,
-} from 'react-native';
-import { LinearGradient } from 'expo-linear-gradient';
-import { useLocalSearchParams } from 'expo-router';
-import { useChat } from '../../contexts/ChatContext';
-import { Ionicons } from '@expo/vector-icons';
-import { GeminiService } from '../../services/GeminiService';
+} from "react-native";
+import { LinearGradient } from "expo-linear-gradient";
+import { useLocalSearchParams } from "expo-router";
+import { useChat } from "../../contexts/ChatContext";
+import { Ionicons } from "@expo/vector-icons";
+import { GeminiService } from "../../services/GeminiService";
 
 interface Message {
   id: string;
@@ -28,15 +28,15 @@ export default function ChatScreen() {
   const { initialMessage } = useLocalSearchParams();
   const { currentChat, addMessage, updateChatTitle } = useChat();
   const [messages, setMessages] = useState<Message[]>([]);
-  const [inputText, setInputText] = useState('');
+  const [inputText, setInputText] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const flatListRef = useRef<FlatList>(null);
   const fadeAnim = useRef(new Animated.Value(0)).current;
 
   useEffect(() => {
-    if (initialMessage && typeof initialMessage === 'string') {
+    if (initialMessage && typeof initialMessage === "string") {
       handleSendMessage(initialMessage);
-      setInputText('');
+      setInputText("");
     }
   }, [initialMessage]);
 
@@ -58,22 +58,37 @@ export default function ChatScreen() {
       timestamp: new Date(),
     };
 
-    setMessages(prev => [...prev, userMessage]);
-    setInputText('');
+    setMessages((prev) => [...prev, userMessage]);
+    setInputText("");
     setIsLoading(true);
 
     try {
       addMessage(userMessage.text, true);
       const response = await GeminiService.generateResponse(text.trim());
 
-      const aiMessage: Message = {
-        id: (Date.now() + 1).toString(),
-        text: response,
-        isUser: false,
-        timestamp: new Date(),
-      };
+      const aiMessageId = (Date.now() + 1).toString();
+      let partialText = "";
 
-      setMessages(prev => [...prev, aiMessage]);
+      setMessages((prev) => [
+        ...prev,
+        {
+          id: aiMessageId,
+          text: "",
+          isUser: false,
+          timestamp: new Date(),
+        },
+      ]);
+
+      for (let i = 0; i < response.length; i++) {
+        partialText += response[i];
+        setMessages((prev) =>
+          prev.map((msg) =>
+            msg.id === aiMessageId ? { ...msg, text: partialText } : msg
+          )
+        );
+        await new Promise((res) => setTimeout(res, 10)); // simulate typing
+      }
+
       addMessage(response, false);
 
       if (messages.length === 0) {
@@ -82,11 +97,11 @@ export default function ChatScreen() {
     } catch (error) {
       const errorMessage: Message = {
         id: (Date.now() + 1).toString(),
-        text: 'Sorry, I encountered an error. Please try again.',
+        text: "Sorry, I encountered an error. Please try again.",
         isUser: false,
         timestamp: new Date(),
       };
-      setMessages(prev => [...prev, errorMessage]);
+      setMessages((prev) => [...prev, errorMessage]);
     } finally {
       setIsLoading(false);
     }
@@ -99,14 +114,24 @@ export default function ChatScreen() {
         item.isUser ? styles.messageRight : styles.messageLeft,
       ]}
     >
-      <View style={[styles.messageBubble, item.isUser ? styles.userBubble : styles.aiBubble]}>
-        <Text style={[styles.messageText, item.isUser ? styles.userText : styles.aiText]}>
+      <View
+        style={[
+          styles.messageBubble,
+          item.isUser ? styles.userBubble : styles.aiBubble,
+        ]}
+      >
+        <Text
+          style={[
+            styles.messageText,
+            item.isUser ? styles.userText : styles.aiText,
+          ]}
+        >
           {item.text}
         </Text>
         <Text style={styles.timestamp}>
           {item.timestamp.toLocaleTimeString([], {
-            hour: '2-digit',
-            minute: '2-digit',
+            hour: "2-digit",
+            minute: "2-digit",
           })}
         </Text>
       </View>
@@ -114,12 +139,12 @@ export default function ChatScreen() {
   );
 
   return (
-    <LinearGradient colors={['#000000', '#1a1a1a']} style={styles.container}>
+    <LinearGradient colors={["#000000", "#1a1a1a"]} style={styles.container}>
       <KeyboardAvoidingView
-      style={{ flex: 1 }}
-      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-      keyboardVerticalOffset={Platform.OS === 'ios' ? 0 : 20} // adjust for status bar/header if needed
-    >
+        style={{ flex: 1 }}
+        behavior={Platform.OS === "ios" ? "padding" : "height"}
+        keyboardVerticalOffset={Platform.OS === "ios" ? 0 : 20} // adjust for status bar/header if needed
+      >
         {/* Header */}
         <View style={styles.header}>
           <Text style={styles.headerTitle}>Grok Chat</Text>
@@ -133,7 +158,7 @@ export default function ChatScreen() {
           ref={flatListRef}
           data={messages}
           renderItem={renderMessage}
-          keyExtractor={item => item.id}
+          keyExtractor={(item) => item.id}
           style={styles.messageList}
           showsVerticalScrollIndicator={false}
           onContentSizeChange={() =>
@@ -141,10 +166,17 @@ export default function ChatScreen() {
           }
           ListEmptyComponent={
             <View style={styles.emptyContainer}>
-              <Ionicons name="chatbubble-ellipses-outline" size={64} color="#333333" />
-              <Text style={styles.emptyText}>Start a conversation with Grok</Text>
+              <Ionicons
+                name="chatbubble-ellipses-outline"
+                size={64}
+                color="#333333"
+              />
+              <Text style={styles.emptyText}>
+                Start a conversation with Grok
+              </Text>
               <Text style={styles.emptySubText}>
-                Ask me anything - I&apos;m here to help with your questions and ideas
+                Ask me anything - I&apos;m here to help with your questions and
+                ideas
               </Text>
             </View>
           }
@@ -177,13 +209,15 @@ export default function ChatScreen() {
               disabled={!inputText.trim() || isLoading}
               style={[
                 styles.sendButton,
-                inputText.trim() && !isLoading ? styles.sendActive : styles.sendDisabled,
+                inputText.trim() && !isLoading
+                  ? styles.sendActive
+                  : styles.sendDisabled,
               ]}
             >
               <Ionicons
                 name="send"
                 size={16}
-                color={inputText.trim() && !isLoading ? '#000000' : '#666666'}
+                color={inputText.trim() && !isLoading ? "#000000" : "#666666"}
               />
             </TouchableOpacity>
           </View>
@@ -201,46 +235,46 @@ const styles = StyleSheet.create({
     paddingTop: 48,
     paddingBottom: 16,
     paddingHorizontal: 24,
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
     borderBottomWidth: 1,
-    borderColor: '#2e2e2e',
+    borderColor: "#2e2e2e",
   },
   headerTitle: {
-    color: '#ffffff',
+    color: "#ffffff",
     fontSize: 20,
-    fontWeight: 'bold',
+    fontWeight: "bold",
   },
   optionsButton: {
     width: 32,
     height: 32,
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: "center",
+    alignItems: "center",
   },
   messageList: {
     flex: 1,
     paddingHorizontal: 24,
   },
   messageLeft: {
-    alignItems: 'flex-start',
+    alignItems: "flex-start",
     marginBottom: 16,
   },
   messageRight: {
-    alignItems: 'flex-end',
+    alignItems: "flex-end",
     marginBottom: 16,
   },
   messageBubble: {
-    maxWidth: '80%',
+    maxWidth: "80%",
     padding: 16,
     borderRadius: 20,
   },
   userBubble: {
-    backgroundColor: '#ffffff',
+    backgroundColor: "#ffffff",
   },
   aiBubble: {
-    backgroundColor: '#1e1e1e',
-    borderColor: '#444444',
+    backgroundColor: "#1e1e1e",
+    borderColor: "#444444",
     borderWidth: 1,
   },
   messageText: {
@@ -248,61 +282,61 @@ const styles = StyleSheet.create({
     lineHeight: 22,
   },
   userText: {
-    color: '#000000',
+    color: "#000000",
   },
   aiText: {
-    color: '#ffffff',
+    color: "#ffffff",
   },
   timestamp: {
     marginTop: 8,
     fontSize: 12,
-    color: '#777777',
+    color: "#777777",
   },
   emptyContainer: {
     flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
+    alignItems: "center",
+    justifyContent: "center",
     paddingVertical: 80,
   },
   emptyText: {
-    color: '#aaaaaa',
+    color: "#aaaaaa",
     fontSize: 18,
     marginTop: 16,
-    textAlign: 'center',
+    textAlign: "center",
   },
   emptySubText: {
-    color: '#777777',
+    color: "#777777",
     fontSize: 14,
     marginTop: 8,
     paddingHorizontal: 32,
-    textAlign: 'center',
+    textAlign: "center",
   },
   loadingContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
     paddingHorizontal: 24,
     paddingBottom: 8,
   },
   loadingText: {
-    color: '#bbbbbb',
+    color: "#bbbbbb",
     marginLeft: 8,
   },
   inputWrapper: {
     borderTopWidth: 1,
-    borderColor: '#2e2e2e',
+    borderColor: "#2e2e2e",
     paddingHorizontal: 24,
     paddingVertical: 12,
   },
   inputContainer: {
-    flexDirection: 'row',
-    backgroundColor: '#1e1e1e',
+    flexDirection: "row",
+    backgroundColor: "#1e1e1e",
     borderRadius: 999,
     paddingHorizontal: 16,
-    alignItems: 'center',
+    alignItems: "center",
   },
   input: {
     flex: 1,
-    color: '#ffffff',
+    color: "#ffffff",
     fontSize: 16,
     paddingVertical: 10,
   },
@@ -311,13 +345,13 @@ const styles = StyleSheet.create({
     height: 32,
     marginLeft: 8,
     borderRadius: 16,
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: "center",
+    alignItems: "center",
   },
   sendActive: {
-    backgroundColor: '#ffffff',
+    backgroundColor: "#ffffff",
   },
   sendDisabled: {
-    backgroundColor: '#444444',
+    backgroundColor: "#444444",
   },
 });
