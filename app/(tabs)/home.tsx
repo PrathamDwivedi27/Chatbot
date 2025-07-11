@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState } from "react";
 import {
   View,
   Text,
@@ -7,14 +7,14 @@ import {
   Animated,
   Dimensions,
   StyleSheet,
-} from 'react-native';
-import { LinearGradient } from 'expo-linear-gradient';
-import { useRouter } from 'expo-router';
-import { useAuth } from '../../contexts/AuthContext';
-import { useChat } from '../../contexts/ChatContext';
-import { Ionicons } from '@expo/vector-icons';
+} from "react-native";
+import { LinearGradient } from "expo-linear-gradient";
+import { useRouter } from "expo-router";
+import { useAuth } from "../../contexts/AuthContext";
+import { useChat } from "../../contexts/ChatContext";
+import { Ionicons } from "@expo/vector-icons";
 
-const { width } = Dimensions.get('window');
+const { width } = Dimensions.get("window");
 
 export default function HomeScreen() {
   const router = useRouter();
@@ -32,36 +32,43 @@ export default function HomeScreen() {
 
   const handleNewChat = () => {
     startNewChat();
-    router.push('/(tabs)/chat');
+    router.push("/(tabs)/chat");
   };
 
   const handleContinueChat = (chatId: string) => {
-    router.push('/(tabs)/chat');
+    router.push("/(tabs)/chat");
   };
 
   const suggestions = [
-    'Explain quantum computing',
-    'Write a creative story',
-    'Help with coding',
-    'Plan a trip',
-    'Solve math problems',
-    'Brainstorm ideas',
+    "Explain quantum computing",
+    "Write a creative story",
+    "Help with coding",
+    "Plan a trip",
+    "Solve math problems",
+    "Brainstorm ideas",
   ];
 
   return (
-    <LinearGradient colors={['#000000', '#1a1a1a']} style={styles.container}>
-      <ScrollView contentContainerStyle={styles.scrollView} showsVerticalScrollIndicator={false}>
+    <LinearGradient colors={["#000000", "#1a1a1a"]} style={styles.container}>
+      <ScrollView
+        contentContainerStyle={styles.scrollView}
+        showsVerticalScrollIndicator={false}
+      >
         {/* Header */}
         <View style={styles.header}>
           <View>
-            <Text style={styles.greeting}>
-              Hello, {user?.name || 'User'}
-            </Text>
+            <Text style={styles.greeting}>Hello, {user?.name || "User"}</Text>
             <Text style={styles.subGreeting}>
               What can I help you with today?
             </Text>
           </View>
-          <TouchableOpacity onPress={logout} style={styles.logoutButton}>
+          <TouchableOpacity
+            onPress={() => {
+              logout();
+              router.replace("/");
+            }}
+            style={styles.logoutButton}
+          >
             <Ionicons name="log-out-outline" size={20} color="#ffffff" />
           </TouchableOpacity>
         </View>
@@ -91,7 +98,7 @@ export default function HomeScreen() {
                   onPress={() => {
                     startNewChat();
                     router.push({
-                      pathname: '/(tabs)/chat',
+                      pathname: "/(tabs)/chat",
                       params: { initialMessage: suggestion },
                     });
                   }}
@@ -116,7 +123,7 @@ export default function HomeScreen() {
                   activeOpacity={0.7}
                 >
                   <Text style={styles.chatTitle} numberOfLines={1}>
-                    {chat.title || 'Untitled Chat'}
+                    {chat.title || "Untitled Chat"}
                   </Text>
                   <Text style={styles.chatMessage} numberOfLines={2}>
                     {chat.lastMessage}
@@ -142,67 +149,67 @@ const styles = StyleSheet.create({
     paddingBottom: 24,
   },
   header: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
     paddingHorizontal: 24,
     paddingTop: 48,
     paddingBottom: 24,
   },
   greeting: {
-    color: '#ffffff',
+    color: "#ffffff",
     fontSize: 24,
-    fontWeight: 'bold',
+    fontWeight: "bold",
   },
   subGreeting: {
-    color: '#aaaaaa',
+    color: "#aaaaaa",
     fontSize: 16,
     marginTop: 4,
   },
   logoutButton: {
     width: 40,
     height: 40,
-    backgroundColor: '#2d2d2d',
+    backgroundColor: "#2d2d2d",
     borderRadius: 20,
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: "center",
+    alignItems: "center",
   },
   section: {
     paddingHorizontal: 24,
     marginBottom: 24,
   },
   newChatButton: {
-    backgroundColor: '#ffffff',
+    backgroundColor: "#ffffff",
     borderRadius: 20,
     padding: 20,
-    shadowColor: '#000',
+    shadowColor: "#000",
     shadowOpacity: 0.2,
     shadowRadius: 6,
     shadowOffset: { width: 0, height: 4 },
   },
   newChatContent: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
   },
   newChatText: {
-    color: '#000',
+    color: "#000",
     fontSize: 16,
-    fontWeight: '600',
+    fontWeight: "600",
     marginLeft: 12,
   },
   sectionTitle: {
-    color: '#ffffff',
+    color: "#ffffff",
     fontSize: 20,
-    fontWeight: 'bold',
+    fontWeight: "bold",
     marginBottom: 16,
   },
   suggestionsContainer: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
+    flexDirection: "row",
+    flexWrap: "wrap",
   },
   suggestionButton: {
-    backgroundColor: '#2d2d2d',
+    backgroundColor: "#2d2d2d",
     borderRadius: 999,
     paddingVertical: 8,
     paddingHorizontal: 16,
@@ -210,28 +217,28 @@ const styles = StyleSheet.create({
     marginBottom: 12,
   },
   suggestionText: {
-    color: '#cccccc',
+    color: "#cccccc",
     fontSize: 14,
   },
   chatCard: {
-    backgroundColor: '#111111',
+    backgroundColor: "#111111",
     borderRadius: 16,
     padding: 16,
     marginBottom: 16,
     borderWidth: 1,
-    borderColor: '#2e2e2e',
+    borderColor: "#2e2e2e",
   },
   chatTitle: {
-    color: '#ffffff',
-    fontWeight: '600',
+    color: "#ffffff",
+    fontWeight: "600",
     marginBottom: 4,
   },
   chatMessage: {
-    color: '#bbbbbb',
+    color: "#bbbbbb",
     fontSize: 14,
   },
   chatDate: {
-    color: '#777777',
+    color: "#777777",
     fontSize: 12,
     marginTop: 8,
   },
