@@ -62,8 +62,8 @@ export default function HomeScreen() {
             </Text>
           </View>
           <TouchableOpacity
-            onPress={() => {
-              logout();
+            onPress={async() => {
+              await logout();
               router.replace("/");
             }}
             style={styles.logoutButton}
