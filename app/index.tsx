@@ -14,7 +14,7 @@ import { Ionicons } from '@expo/vector-icons';
 
 const { width, height } = Dimensions.get('window');
 
-export default function WelcomeScreen() {
+export default function Index() {
   const router = useRouter();
   const { isAuthenticated } = useAuth();
   const fadeAnim = new Animated.Value(0);

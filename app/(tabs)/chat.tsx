@@ -116,9 +116,10 @@ export default function ChatScreen() {
   return (
     <LinearGradient colors={['#000000', '#1a1a1a']} style={styles.container}>
       <KeyboardAvoidingView
-        style={{ flex: 1 }}
-        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-      >
+      style={{ flex: 1 }}
+      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+      keyboardVerticalOffset={Platform.OS === 'ios' ? 0 : 20} // adjust for status bar/header if needed
+    >
         {/* Header */}
         <View style={styles.header}>
           <Text style={styles.headerTitle}>Grok Chat</Text>

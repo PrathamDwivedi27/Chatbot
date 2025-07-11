@@ -1,11 +1,12 @@
+
 export class GeminiService {
-  private static readonly API_KEY = "AIzaSyAQ32fMd08812NI49JMnXxLjC5OsEUUFgA"; // 🔑 Replace with actual Gemini API Key
+  private static readonly API_KEY = "AIzaSyDsif0DejxlTQR5LIgrd-1ROatAIAna9h0";
   private static readonly BASE_URL =
-    "https://generativelanguage.googleapis.com/v1/models/gemini-pro:generateContent";
+    "https://generativelanguage.googleapis.com/v1/models/gemini-2.5-pro:generateContent";
 
   static async generateResponse(prompt: string): Promise<string> {
     try {
-      const systemInstruction = `
+      const instruction = `
 You are Grok, an AI assistant who is intelligent, funny, and helpful. 
 Always respond in a conversational and friendly tone. 
 If the user is sarcastic, feel free to be witty or playfully sarcastic back. 
@@ -22,20 +23,20 @@ Always keep the message helpful, engaging, and brief unless the user asks for de
         body: JSON.stringify({
           contents: [
             {
-              role: "system",
-              parts: [{ text: systemInstruction }],
-            },
-            {
               role: "user",
-              parts: [{ text: prompt }],
+              parts: [
+                {
+                  text: `${instruction}\n\nUser: ${prompt}`,
+                },
+              ],
             },
           ],
         }),
       });
 
       if (!response.ok) {
-        const errorText = await response.text(); // get full error
-        console.error("❌ Gemini API error:", errorText); // log this
+        const errorText = await response.text();
+        console.error("❌ Gemini API error:", errorText);
         throw new Error(`Gemini API failed: ${response.status}`);
       }
 
@@ -47,11 +48,10 @@ Always keep the message helpful, engaging, and brief unless the user asks for de
 
       return reply;
     } catch (error) {
-      if (error instanceof Error) {
-        console.error("Error generating response:", error.message);
-      } else {
-        console.error("Error generating response:", error);
-      }
+      console.error(
+        "Error generating response:",
+        error instanceof Error ? error.message : error
+      );
       return "Oops, Grok got a brain freeze. Try again?";
     }
   }
