@@ -52,7 +52,6 @@ const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   };
 
   const login = async (email: string, password: string) => {
-    // Mock authentication - replace with real authentication
     const mockUser: User = {
       id: '1',
       email,
@@ -65,7 +64,6 @@ const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   };
 
   const register = async (email: string, password: string, name: string) => {
-    // Mock registration - replace with real authentication
     const mockUser: User = {
       id: Date.now().toString(),
       email,
