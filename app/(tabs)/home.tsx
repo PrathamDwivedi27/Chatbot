@@ -5,7 +5,6 @@ import {
   ScrollView,
   TouchableOpacity,
   Animated,
-  Dimensions,
   StyleSheet,
 } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
@@ -14,7 +13,7 @@ import { useAuth } from "../../contexts/AuthContext";
 import { useChat } from "../../contexts/ChatContext";
 import { Ionicons } from "@expo/vector-icons";
 
-const { width } = Dimensions.get("window");
+// const { width } = Dimensions.get("window");
 
 export default function HomeScreen() {
   const router = useRouter();
@@ -28,7 +27,7 @@ export default function HomeScreen() {
       duration: 800,
       useNativeDriver: true,
     }).start();
-  }, []);
+  }, [fadeAnim]);
 
   const handleNewChat = () => {
     startNewChat();

@@ -47,24 +47,33 @@ export const ChatProvider: React.FC<{ children: React.ReactNode }> = ({
   }, []);
 
   const loadChats = async () => {
-    try {
-      const chatsData = await AsyncStorage.getItem('chats');
-      if (chatsData) {
-        const parsedChats = JSON.parse(chatsData).map((chat: any) => ({
-          ...chat,
-          createdAt: new Date(chat.createdAt),
-          updatedAt: new Date(chat.updatedAt),
-          messages: chat.messages.map((msg: any) => ({
-            ...msg,
-            timestamp: new Date(msg.timestamp),
-          })),
-        }));
-        setRecentChats(parsedChats);
+  try {
+    const chatsData = await AsyncStorage.getItem('chats');
+    const currentChatId = await AsyncStorage.getItem('currentChatId');
+
+    if (chatsData) {
+      const parsedChats: Chat[] = JSON.parse(chatsData).map((chat: any) => ({
+        ...chat,
+        createdAt: new Date(chat.createdAt),
+        updatedAt: new Date(chat.updatedAt),
+        messages: chat.messages.map((msg: any) => ({
+          ...msg,
+          timestamp: new Date(msg.timestamp),
+        })),
+      }));
+
+      setRecentChats(parsedChats);
+
+      if (currentChatId) {
+        const current = parsedChats.find(chat => chat.id === currentChatId);
+        if (current) setCurrentChat(current);
       }
-    } catch (error) {
-      console.error('Error loading chats:', error);
     }
-  };
+  } catch (error) {
+    console.error('Error loading chats:', error);
+  }
+};
+
 
   const saveChats = async (chats: Chat[]) => {
     try {
@@ -74,17 +83,25 @@ export const ChatProvider: React.FC<{ children: React.ReactNode }> = ({
     }
   };
 
-  const startNewChat = () => {
-    const newChat: Chat = {
-      id: Date.now().toString(),
-      title: 'New Chat',
-      messages: [],
-      createdAt: new Date(),
-      updatedAt: new Date(),
-      lastMessage: '',
-    };
-    setCurrentChat(newChat);
+  const startNewChat = async () => {
+  const newChat: Chat = {
+    id: Date.now().toString(),
+    title: 'New Chat',
+    messages: [],
+    createdAt: new Date(),
+    updatedAt: new Date(),
+    lastMessage: '',
   };
+
+  setCurrentChat(newChat);
+
+  const updatedChats = [newChat, ...recentChats].slice(0, 10);
+  setRecentChats(updatedChats);
+
+  await AsyncStorage.setItem('currentChatId', newChat.id);
+  await saveChats(updatedChats);
+};
+
 
   const addMessage = (text: string, isUser: boolean) => {
     if (!currentChat) return;

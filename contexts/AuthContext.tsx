@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState } from 'react'
+import React, { createContext, useContext, useEffect, useState } from 'react'
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 interface User{
@@ -81,6 +81,10 @@ const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     setUser(null);
     setIsAuthenticated(false);
   };
+
+  useEffect(()=>{
+    checkAuthStatus();
+  },[]);
   return (
     <AuthContext.Provider
       value={{

@@ -40,7 +40,7 @@ export default function AuthScreen() {
         useNativeDriver: true,
       }),
     ]).start();
-  }, []);
+  }, [fadeAnim, slideAnim]);
 
   const handleAuth = async () => {
     if (!email.trim() || !password.trim()) {
