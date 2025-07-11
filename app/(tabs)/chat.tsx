@@ -25,13 +25,26 @@ interface Message {
 }
 
 export default function ChatScreen() {
-  const { initialMessage } = useLocalSearchParams();
-  const { currentChat, addMessage, updateChatTitle } = useChat();
+  const { chatId, initialMessage } = useLocalSearchParams();
+  const { currentChat, addMessage, updateChatTitle,recentChats } = useChat();
   const [messages, setMessages] = useState<Message[]>([]);
   const [inputText, setInputText] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const flatListRef = useRef<FlatList>(null);
   const fadeAnim = useRef(new Animated.Value(0)).current;
+
+
+// This effect syncs messages only once when chatId or recentChats change
+useEffect(() => {
+  if (chatId && recentChats.length > 0) {
+    const matched = recentChats.find((chat) => chat.id === chatId);
+    if (matched) {
+      setMessages([...matched.messages]); // clone to avoid mutation issues
+    }
+  }
+}, [chatId, recentChats]);
+
+
 
   useEffect(() => {
     if (initialMessage && typeof initialMessage === "string") {

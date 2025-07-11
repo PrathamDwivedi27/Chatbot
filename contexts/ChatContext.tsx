@@ -83,7 +83,7 @@ export const ChatProvider: React.FC<{ children: React.ReactNode }> = ({
     }
   };
 
-  const startNewChat = async () => {
+  const startNewChat = async (): Promise<string> => {
   const newChat: Chat = {
     id: Date.now().toString(),
     title: 'New Chat',
@@ -100,7 +100,10 @@ export const ChatProvider: React.FC<{ children: React.ReactNode }> = ({
 
   await AsyncStorage.setItem('currentChatId', newChat.id);
   await saveChats(updatedChats);
+
+  return newChat.id; // return ID so router can use it
 };
+
 
 
   const addMessage = (text: string, isUser: boolean) => {

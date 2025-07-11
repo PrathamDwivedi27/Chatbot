@@ -32,10 +32,19 @@ export default function HomeScreen() {
     }).start();
   }, [fadeAnim]);
 
-  const handleNewChat = () => {
-    startNewChat();
-    router.push("/(tabs)/chat");
-  };
+const handleNewChat = async () => {
+  const newChatId = await startNewChat();
+  if (typeof newChatId === "string" || typeof newChatId === "number") {
+    router.push({
+      pathname: "/(tabs)/chat",
+      params: { chatId: newChatId },
+    });
+  } else {
+    // Handle error or fallback
+    console.warn("Failed to start new chat: no chatId returned.");
+  }
+};
+
 
   const handleContinueChat = (chatId: string) => {
     router.push("/(tabs)/chat");
